@@ -22,6 +22,7 @@
   "homepage": "https://github.com/arman-devops7/backend_node#readme",
   "description": "",
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "prettier": "^3.4.2"
   }
 }
