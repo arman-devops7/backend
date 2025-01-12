@@ -11,6 +11,8 @@ class ApiResponse {
   }
 }
 
+export { ApiResponse }
+
 // info response 100-199
 // successful response 200-299
 // redirection response 300-399
