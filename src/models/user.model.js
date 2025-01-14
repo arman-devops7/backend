@@ -56,7 +56,7 @@ userSchema.pre("save", async function (next) {
   // only make chngs whn psswrd is modified else return
   if (!this.isModified("password")) return next();
   // to ecrypt the password (password, no of rounds)
-  this.password = bcrypt.hash(this.password, 10)
+  this.password = await bcrypt.hash(this.password, 10)
   next();
 
 })
@@ -68,7 +68,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 
 }
 
-// generate access token
+// generate access token (shortlived)
 userSchema.methods.generateAccessToken = async function () {
   return jwt.sign(
     {
@@ -78,20 +78,25 @@ userSchema.methods.generateAccessToken = async function () {
       username: this.username,
       fullName: this.fullName,
     },
-    process.env.ACCESS_TOKEN_SECRET,   //accessToken
+     //accessToken 
+    process.env.ACCESS_TOKEN_SECRET,
+    // expires when
     {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY
     }
   )
 }
 
-// generate refresh token (refresh token holds less info)
+// generate refresh token (refresh token holds less info) (long lived)
 userSchema.methods.generateRefreshToken = async function () {
   return jwt.sign(
     {
+      //payload
       _id: this._id,
     },
-    process.env.REFRESH_TOKEN_SECRET,   //refreshToken
+    //refreshToken 
+    process.env.REFRESH_TOKEN_SECRET,
+    // expires when
     {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY
     }

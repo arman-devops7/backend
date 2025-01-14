@@ -80,3 +80,10 @@ PATCH : change part of a resource
 404 Not found
 500 Internal server error
 504 gateway timeout
+
+# Access Token
+
+if u hv access token u can do access resource
+we save refresh token in db and give to user also
+we validate user with access token only
+user will hit a endpoint if refreshtoken mtchs the db token with user token thn u will get new access token
