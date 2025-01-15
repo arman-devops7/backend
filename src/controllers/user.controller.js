@@ -90,7 +90,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
   // username or email based login check for one thing
-  if (!username || !email) throw new ApiError(400, "Username or email is required");
+  if (!username && !email) throw new ApiError(400, "Username or email is required");
 
   // find the user
   const user = await User.findOne({
@@ -137,7 +137,7 @@ const logoutUser = asyncHandler(async (req, res) => {
         refreshToken: undefined
       }
     },
-      {
+    {
       new: true
     }
   )

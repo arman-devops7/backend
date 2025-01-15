@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
 
 const userSchema = new Schema(
   {
@@ -10,13 +10,13 @@ const userSchema = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      index: true  //to make field searchable (optimize)
+      index: true
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      lowercase: true,
+      lowecase: true,
       trim: true,
     },
     fullName: {
@@ -26,11 +26,11 @@ const userSchema = new Schema(
       index: true
     },
     avatar: {
-      type: String, //cloudinary url
+      type: String, // cloudinary url
       required: true,
     },
     coverImage: {
-      type: String, //cloudinary url
+      type: String, // cloudinary url
     },
     watchHistory: [
       {
@@ -40,15 +40,17 @@ const userSchema = new Schema(
     ],
     password: {
       type: String,
-      required: [
-        true, "Password is required"
-      ],
+      required: [true, 'Password is required']
     },
     refreshToken: {
-      type: String,
-    },
-  }, { timestamps: true }
-);
+      type: String
+    }
+
+  },
+  {
+    timestamps: true
+  }
+)
 
 // mongoose pre hook middleware (to do smthng before storing in db eg encrypt pass)
 // note dont use fat arrow fn becoz we cant use this keyword
@@ -57,30 +59,24 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   // to ecrypt the password (password, no of rounds)
   this.password = await bcrypt.hash(this.password, 10)
-  next();
-
+  next()
 })
 
 // custom method (to check passsword)
 userSchema.methods.isPasswordCorrect = async function (password) {
-  // this returns true or false
   return await bcrypt.compare(password, this.password)
-
 }
 
 // generate access token (shortlived)
-userSchema.methods.generateAccessToken = async function () {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
-      //payload
       _id: this._id,
       email: this.email,
       username: this.username,
-      fullName: this.fullName,
+      fullName: this.fullName
     },
-     //accessToken 
     process.env.ACCESS_TOKEN_SECRET,
-    // expires when
     {
       expiresIn: process.env.ACCESS_TOKEN_EXPIRY
     }
@@ -88,15 +84,13 @@ userSchema.methods.generateAccessToken = async function () {
 }
 
 // generate refresh token (refresh token holds less info) (long lived)
-userSchema.methods.generateRefreshToken = async function () {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
-      //payload
       _id: this._id,
+
     },
-    //refreshToken 
     process.env.REFRESH_TOKEN_SECRET,
-    // expires when
     {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRY
     }
